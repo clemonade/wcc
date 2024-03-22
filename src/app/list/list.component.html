@@ -1,0 +1,8 @@
+@for (pokemon of pokemons; track pokemon.name) {
+  <div>{{ pokemon.name }}</div>
+  <div>{{ pokemon.url }}</div>
+  @if (pokedex[pokemon.name]) {
+    <img [src]="pokedex[pokemon.name].sprites?.other?.showdown?.front_default"/>
+  }
+}
+<!--<pre>{{ pokedex| json }}</pre>-->
