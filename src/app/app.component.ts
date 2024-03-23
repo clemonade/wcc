@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
-import {ListComponent} from "./list/list.component";
+import {ListComponent} from "./features/list/list.component";
 
 @Component({
   selector: 'app-root',
@@ -11,5 +11,5 @@ import {ListComponent} from "./list/list.component";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  title = 'wcc';
+  // title = 'wcc';
 }
