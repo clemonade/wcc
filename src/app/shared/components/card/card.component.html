@@ -1,40 +1,59 @@
 <!--TODO: add skeleton-->
 @if (pokemon) {
-  <mat-card class="w-64 h 96">
+  <mat-card class="w-64 h-96">
     <mat-card-header>
       <mat-card-title-group>
-        <mat-card-title>{{ pokemon.name }}</mat-card-title>
+        <mat-card-title><span>{{ pokemon.name| replace | titlecase }}</span></mat-card-title>
+        <div class="flex flex-col justify-center text-center">
+          <span class="rounded p-1 bg-gray-200 font-medium">
+            #{{ pokemon.id | number: '4.0-0' | replace: commaRegExp: "" }}
+          </span>
+        </div>
       </mat-card-title-group>
     </mat-card-header>
-    <mat-card-content>
-<!--TODO: handle empty condition-->
-<!--TODO: fixed height, attributes-->
-      @if (pokemon.sprites.other.showdown?.front_default ?? pokemon.sprites.front_default) {
-        <div class="flex justify-center">
-          <img [src]="pokemon.sprites.other.showdown?.front_default ?? pokemon.sprites.front_default"
-               [alt]="pokemon.name"/>
+    <mat-card-content class="h-full">
+      <div class="flex flex-col justify-between h-full">
+        <div class="flex flex-col gap-3">
+          <!--TODO: handle no image-->
+          @if (pokemon.sprites.other.showdown?.front_default ?? pokemon.sprites.front_default) {
+            <div class="flex justify-center h-28">
+              <div class="flex flex-col justify-end">
+                <img class="max-h-28"
+                     [src]="pokemon.sprites.other.showdown?.front_default ?? pokemon.sprites.front_default"
+                     [alt]="pokemon.name"/>
+              </div>
+            </div>
+          }
+
+          <div class="flex justify-center gap-2">
+            @for (type of pokemon.types; track $index) {
+              <span [class]="'rounded p-1 text-white ' + TYPE_MAP[type.type.name]">
+                {{ type.type.name| replace | titlecase }}
+              </span>
+            }
+          </div>
         </div>
-      }
-      @for (stat of pokemon.stats; track stat.stat.name) {
-        <div>{{ stat.stat.name }}: {{ stat.base_stat }}</div>
-      }
-      @for (ability of pokemon.abilities; track ability.slot) {
-        <div>{{ ability.ability.name }}</div>
-      }
+
+        <div class="flex justify-around gap-2">
+          @for (ability of pokemon.abilities| slice: 0: 2; track $index) {
+            <div class="flex flex-col justify-center text-center">
+              <span>{{ ability.ability.name | replace | titlecase }}</span>
+              @if (ability.is_hidden) {
+                <span class="mat-caption">Hidden Ability</span>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          @for (stat of pokemon.stats; track $index) {
+            <div [class]="'grid grid-rows-2 p-0.5 rounded text-center ' + STAT_LABELS[stat.stat.name].backgroundColor">
+              <span>{{ STAT_LABELS[stat.stat.name].label }}</span>
+              <span>{{ stat.base_stat }}</span>
+            </div>
+          }
+        </div>
+      </div>
     </mat-card-content>
-    <mat-card-actions>
-      <mat-chip-set>
-        @for (type of pokemon.types; track type.slot) {
-          <mat-chip>{{ type.type.name }}</mat-chip>
-        }
-      </mat-chip-set>
-    </mat-card-actions>
   </mat-card>
 }
-<!--    @if (pokedex[pokemon.name].sprites.other.showdown) {-->
-<!--      @for (sprite of pokedex[pokemon.name].sprites.other.showdown | keyvalue; track sprite.key) {-->
-<!--        @if (sprite.value) {-->
-<!--          <img [src]="sprite.value" [alt]="pokemon.name"/>-->
-<!--        }-->
-<!--      }-->
-<!--    }-->

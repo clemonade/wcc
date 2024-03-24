@@ -6,7 +6,7 @@ import {
   inject,
   OnInit,
   ViewChild
-} from '@angular/core';
+} from "@angular/core";
 import {PokemonService} from "../../shared/services/pokemon.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {NamedAPIResource} from "pokenode-ts";
@@ -14,7 +14,6 @@ import {
   BehaviorSubject,
   concatMap,
   debounceTime,
-  distinct,
   distinctUntilChanged,
   fromEvent,
   map,
@@ -27,30 +26,31 @@ import {PokemonExtended} from "../../shared/models/pokemon";
 import {CardComponent} from "../../shared/components/card/card.component";
 import {CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport} from "@angular/cdk/scrolling";
 import {
-  CARD_GAP_PX,
-  CARD_HEIGHT_PX,
-  CARD_WIDTH_PX,
+DEFAULT_PATH,
   PAGINATION_PARAMS_LIMIT,
   WINDOWS_RESIZE_DEBOUNCE_TIME
-} from "../../core/constants/pokemon";
+} from "../../core/constants/app";
+import {RouterLink} from "@angular/router";
+import {CARD_GAP_PX, CARD_HEIGHT_PX, CARD_WIDTH_PX} from "../../core/constants/style";
 
 @Component({
-  selector: 'app-list',
+  selector: "app-list",
   standalone: true,
   imports: [
     CardComponent,
     CdkVirtualScrollViewport,
     CdkFixedSizeVirtualScroll,
-    CdkVirtualForOf
+    CdkVirtualForOf,
+    RouterLink
   ],
-  templateUrl: './list.component.html',
-  styleUrl: './list.component.scss',
+  templateUrl: "./list.component.html",
+  styleUrl: "./list.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListComponent implements OnInit {
   pokemonService = inject(PokemonService);
   changeDetectorRef = inject(ChangeDetectorRef);
-  destroyRef = inject(DestroyRef)
+  destroyRef = inject(DestroyRef);
 
   pokemons: NamedAPIResource[] = [];
   chunkedPokemons: NamedAPIResource[][] = [];
@@ -63,9 +63,8 @@ export class ListComponent implements OnInit {
 
   // TODO: add documentation
   pokemons$ = this.offset.pipe(
-    distinct(),
     concatMap((offset) => {
-      return this.pokemonService.getPokemons$({offset, limit: PAGINATION_PARAMS_LIMIT})
+      return this.pokemonService.getPokemons$({offset, limit: PAGINATION_PARAMS_LIMIT});
     }),
     tap(({results, count}) => {
       this.pokemons = [...this.pokemons, ...results];
@@ -73,7 +72,7 @@ export class ListComponent implements OnInit {
       this.end = this.offset.value >= count;
     }),
     switchMap(({results}) => {
-      return results.map(pokemon => pokemon.name)
+      return results.map(pokemon => pokemon.name);
     }),
     mergeMap(name => this.pokemonService.getPokemonByNameOrId$(name).pipe(takeUntilDestroyed(this.destroyRef))),
     tap((pokemon) => {
@@ -81,7 +80,7 @@ export class ListComponent implements OnInit {
     })
   );
 
-  windowResize$ = fromEvent(window, 'resize').pipe(
+  windowResize$ = fromEvent(window, "resize").pipe(
     debounceTime(WINDOWS_RESIZE_DEBOUNCE_TIME),
     map(() => {
       return this.getCardsPerRow();
@@ -90,7 +89,7 @@ export class ListComponent implements OnInit {
     tap(() => {
       this.chunkPokemons();
     })
-  )
+  );
 
   @ViewChild(CdkVirtualScrollViewport)
   cdkVirtualScrollViewport!: CdkVirtualScrollViewport;
@@ -98,9 +97,9 @@ export class ListComponent implements OnInit {
   ngOnInit(): void {
     merge(this.pokemons$, this.windowResize$).pipe(
       tap(() => {
-        this.changeDetectorRef.markForCheck()
+        this.changeDetectorRef.markForCheck();
       }),
-      takeUntilDestroyed(this.destroyRef)).subscribe()
+      takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   scrollIndexChanged(): void {
@@ -129,4 +128,5 @@ export class ListComponent implements OnInit {
   }
 
   trackByIndex = (index: number) => index;
+  protected readonly DEFAULT_PATH = DEFAULT_PATH;
 }

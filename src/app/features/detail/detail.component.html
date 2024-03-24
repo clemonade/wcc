@@ -1,1 +1,58 @@
-<p>detail works!</p>
+<button mat-button [routerLink]="['/' + DEFAULT_PATH]">List</button>
+@if (pokemon) {
+  <app-card [pokemon]="pokemon"></app-card>
+
+  @if (evolutionChain?.chain) {
+    <ng-container [ngTemplateOutlet]="chainTemplate"
+                  [ngTemplateOutletContext]="{$implicit: evolutionChain?.chain}">
+    </ng-container>
+  }
+
+  @for (type of pokemon.types; track $index) {
+    <h1>{{ type.type.name }}</h1>
+    @if (types[type.type.name]) {
+      @for (damageRelations of types[type.type.name].damage_relations | keyvalue; track $index) {
+        @if (damageRelations.value.length) {
+          <div>
+            {{ damageRelations.key }}:
+            @for (damageRelation of damageRelations.value; track $index) {
+              <mat-chip>{{ damageRelation.name }}</mat-chip>
+            }
+          </div>
+        }
+      }
+    }
+  }
+
+  @for (ability of pokemon.abilities; track $index) {
+    <h1>{{ ability.ability.name }}</h1>
+    @if (abilities[ability.ability.name]) {
+      @for (effectEntries of abilities[ability.ability.name].effect_entries; track $index) {
+        <!--TODO: handle language unavailable -->
+        @if (effectEntries.language.name === LANGUAGE) {
+          <div>{{ effectEntries.short_effect }}</div>
+          <div>{{ effectEntries.effect }}</div>
+        }
+      }
+    }
+  }
+
+  <!--TODO: crawl and show sprite variants-->
+    <!--  @if (pokemon.sprites.other.showdown) {-->
+    <!--    @for (sprite of pokemon.sprites.other.showdown | keyvalue; track $index) {-->
+    <!--      @if (sprite.value) {-->
+    <!--        <img [src]="sprite.value" [alt]="pokemon.name"/>-->
+    <!--      }-->
+    <!--    }-->
+    <!--  }-->
+}
+
+<ng-template #chainTemplate let-chain>
+  <button mat-button [routerLink]="['/' + DEFAULT_PATH + '/' + chain.species.name]"> {{ chain.species.name }}</button>
+  @if (chain.evolves_to.length) {
+    <mat-icon fontIcon="chevron_right"></mat-icon>
+    <ng-container [ngTemplateOutlet]="chainTemplate"
+                  [ngTemplateOutletContext]="{$implicit: chain.evolves_to[0]}">
+    </ng-container>
+  }
+</ng-template>
