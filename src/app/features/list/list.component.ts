@@ -15,6 +15,7 @@ import {
   concatMap,
   debounceTime,
   distinct,
+  distinctUntilChanged,
   fromEvent,
   map,
   merge,
@@ -25,7 +26,13 @@ import {
 import {PokemonExtended} from "../../shared/models/pokemon";
 import {CardComponent} from "../../shared/components/card/card.component";
 import {CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport} from "@angular/cdk/scrolling";
-import {CARD_GAP_PX, CARD_GAP_TAILWIND_CSS, CARD_HEIGHT_PX, CARD_WIDTH_PX} from "../../core/constants/pokemon";
+import {
+  CARD_GAP_PX,
+  CARD_HEIGHT_PX,
+  CARD_WIDTH_PX,
+  PAGINATION_PARAMS_LIMIT,
+  WINDOWS_RESIZE_DEBOUNCE_TIME
+} from "../../core/constants/pokemon";
 
 @Component({
   selector: 'app-list',
@@ -50,17 +57,15 @@ export class ListComponent implements OnInit {
   pokedex: Record<string, PokemonExtended> = {};
 
   offset = new BehaviorSubject(0);
-  limit = 20;
   end = false;
 
   protected readonly CARD_HEIGHT_PX = CARD_HEIGHT_PX;
-  protected readonly CARD_GAP_TAILWIND_CSS = CARD_GAP_TAILWIND_CSS;
 
   // TODO: add documentation
   pokemons$ = this.offset.pipe(
     distinct(),
     concatMap((offset) => {
-      return this.pokemonService.getPokemons$({offset, limit: this.limit})
+      return this.pokemonService.getPokemons$({offset, limit: PAGINATION_PARAMS_LIMIT})
     }),
     tap(({results, count}) => {
       this.pokemons = [...this.pokemons, ...results];
@@ -77,11 +82,11 @@ export class ListComponent implements OnInit {
   );
 
   windowResize$ = fromEvent(window, 'resize').pipe(
-    debounceTime(1000),
+    debounceTime(WINDOWS_RESIZE_DEBOUNCE_TIME),
     map(() => {
-      return this.getMaxCardsPerRow();
+      return this.getCardsPerRow();
     }),
-    distinct(),
+    distinctUntilChanged(),
     tap(() => {
       this.chunkPokemons();
     })
@@ -105,23 +110,22 @@ export class ListComponent implements OnInit {
     const end = this.cdkVirtualScrollViewport.getRenderedRange().end;
     const total = this.cdkVirtualScrollViewport.getDataLength();
     if (end === total) {
-      this.offset.next(this.offset.value + this.limit);
+      this.offset.next(this.offset.value + PAGINATION_PARAMS_LIMIT);
     }
   }
 
   chunkPokemons(): void {
-    const maxCardsPerRow = this.getMaxCardsPerRow();
+    const cardsPerRow = this.getCardsPerRow();
     this.chunkedPokemons = this.pokemons.reduce((acc: NamedAPIResource[][], curr: NamedAPIResource, index: number) => {
-      if (index % maxCardsPerRow === 0) acc.push([curr]);
+      if (index % cardsPerRow === 0) acc.push([curr]);
       else acc[acc.length - 1].push(curr);
       return acc;
     }, []);
   }
 
-  getMaxCardsPerRow(): number {
-    const cardsPerRow = Math.floor(window.innerWidth / CARD_WIDTH_PX);
-    const cardsPerRowWithGap = Math.floor((window.innerWidth - ((cardsPerRow - 1) * CARD_GAP_PX)) / CARD_WIDTH_PX);
-    return Math.min(cardsPerRow, cardsPerRowWithGap);
+  getCardsPerRow(): number {
+    const cardsPerRow = Math.floor(window.innerWidth / CARD_WIDTH_PX) || 1;
+    return Math.floor((window.innerWidth - (cardsPerRow * CARD_GAP_PX)) / CARD_WIDTH_PX) || 1;
   }
 
   trackByIndex = (index: number) => index;

@@ -9,7 +9,6 @@ import {
   MatCardTitleGroup
 } from "@angular/material/card";
 import {MatChip, MatChipSet} from "@angular/material/chips";
-import {CARD_HEIGHT_TAILWIND_CSS, CARD_WIDTH_TAILWIND_CSS} from "../../../core/constants/pokemon";
 
 @Component({
   selector: 'app-card',
@@ -30,6 +29,4 @@ import {CARD_HEIGHT_TAILWIND_CSS, CARD_WIDTH_TAILWIND_CSS} from "../../../core/c
 })
 export class CardComponent {
   @Input() pokemon?: PokemonExtended;
-  protected readonly CARD_WIDTH_TAILWIND_CSS = CARD_WIDTH_TAILWIND_CSS;
-  protected readonly CARD_HEIGHT_TAILWIND_CSS = CARD_HEIGHT_TAILWIND_CSS;
 }
