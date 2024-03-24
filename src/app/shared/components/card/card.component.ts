@@ -4,6 +4,7 @@ import {MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCardTitleGroup}
 import {STAT_MAP, TYPE_MAP} from "../../constants/pokemon";
 import {DecimalPipe, SlicePipe, TitleCasePipe} from "@angular/common";
 import {ReplacePipe} from "../../pipes/replace.pipe";
+import {COMMA_REG_EXP} from "../../constants/utils";
 
 @Component({
   selector: "app-card",
@@ -25,7 +26,7 @@ import {ReplacePipe} from "../../pipes/replace.pipe";
 })
 export class CardComponent {
   @Input() pokemon?: PokemonExtended;
-  commaRegExp = /[,]/g;
   protected readonly STAT_LABELS = STAT_MAP;
   protected readonly TYPE_MAP = TYPE_MAP;
+  protected readonly COMMA_REG_EXP = COMMA_REG_EXP;
 }

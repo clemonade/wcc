@@ -12,9 +12,11 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {NamedAPIResource} from "pokenode-ts";
 import {
   BehaviorSubject,
+  catchError,
   concatMap,
   debounceTime,
   distinctUntilChanged,
+  EMPTY,
   fromEvent,
   map,
   merge,
@@ -25,11 +27,7 @@ import {
 import {PokemonExtended} from "../../shared/models/pokemon";
 import {CardComponent} from "../../shared/components/card/card.component";
 import {CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport} from "@angular/cdk/scrolling";
-import {
-DEFAULT_PATH,
-  PAGINATION_PARAMS_LIMIT,
-  WINDOWS_RESIZE_DEBOUNCE_TIME
-} from "../../core/constants/app";
+import {DEFAULT_PATH, PAGINATION_PARAMS_LIMIT, WINDOWS_RESIZE_DEBOUNCE_TIME} from "../../core/constants/app";
 import {RouterLink} from "@angular/router";
 import {CARD_GAP_PX, CARD_HEIGHT_PX, CARD_WIDTH_PX} from "../../core/constants/style";
 
@@ -62,6 +60,8 @@ export class ListComponent implements OnInit {
   protected readonly CARD_HEIGHT_PX = CARD_HEIGHT_PX;
 
   // TODO: add documentation
+  // TODO: add error handling
+  // TODO: add search functionality
   pokemons$ = this.offset.pipe(
     concatMap((offset) => {
       return this.pokemonService.getPokemons$({offset, limit: PAGINATION_PARAMS_LIMIT});
@@ -74,10 +74,11 @@ export class ListComponent implements OnInit {
     switchMap(({results}) => {
       return results.map(pokemon => pokemon.name);
     }),
-    mergeMap(name => this.pokemonService.getPokemonByNameOrId$(name).pipe(takeUntilDestroyed(this.destroyRef))),
+    mergeMap(name => this.pokemonService.getPokemonByNameOrId$(name).pipe(catchError(() => EMPTY),)),
     tap((pokemon) => {
       this.pokedex[pokemon.name] = pokemon;
-    })
+    }),
+    takeUntilDestroyed(this.destroyRef)
   );
 
   windowResize$ = fromEvent(window, "resize").pipe(
@@ -88,7 +89,8 @@ export class ListComponent implements OnInit {
     distinctUntilChanged(),
     tap(() => {
       this.chunkPokemons();
-    })
+    }),
+    takeUntilDestroyed(this.destroyRef)
   );
 
   @ViewChild(CdkVirtualScrollViewport)

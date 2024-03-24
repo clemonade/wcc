@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, injec
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {EMPTY, map, merge, mergeMap, switchMap, tap} from "rxjs";
 import {CardComponent} from "../../shared/components/card/card.component";
-import {AsyncPipe, JsonPipe, KeyValuePipe, NgTemplateOutlet} from "@angular/common";
+import {AsyncPipe, JsonPipe, KeyValuePipe, NgTemplateOutlet, TitleCasePipe} from "@angular/common";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {PokemonService} from "../../shared/services/pokemon.service";
 import {Ability, EvolutionChain, PokemonSpecies, Type} from "pokenode-ts";
@@ -12,6 +12,9 @@ import {DEFAULT_PATH, LANGUAGE} from "../../core/constants/app";
 import {MatBadge} from "@angular/material/badge";
 import {MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
+import {ReplacePipe} from "../../shared/pipes/replace.pipe";
+import {UNDERSCORE_REG_EXP} from "../../shared/constants/utils";
+import {TYPE_MAP} from "../../shared/constants/pokemon";
 
 @Component({
   selector: "app-detail",
@@ -26,7 +29,9 @@ import {MatIcon} from "@angular/material/icon";
     NgTemplateOutlet,
     RouterLink,
     MatButton,
-    MatIcon
+    MatIcon,
+    ReplacePipe,
+    TitleCasePipe
   ],
   templateUrl: "./detail.component.html",
   styleUrl: "./detail.component.scss",
@@ -50,7 +55,8 @@ export class DetailComponent implements OnInit {
     }),
     tap((pokemon) => {
       this.pokemon = pokemon;
-    })
+    }),
+    takeUntilDestroyed(this.destroyRef)
   );
 
   types$ = this.pokemon$.pipe(
@@ -58,11 +64,12 @@ export class DetailComponent implements OnInit {
       return pokemon.types.map(type => type.type.name);
     }),
     mergeMap((typeName) => {
-      return this.pokemonService.getTypeByNameOrId$(typeName).pipe(takeUntilDestroyed(this.destroyRef));
+      return this.pokemonService.getTypeByNameOrId$(typeName);
     }),
     tap((type) => {
       this.types[type.name] = type;
-    })
+    }),
+    takeUntilDestroyed(this.destroyRef)
   );
 
   abilities$ = this.pokemon$.pipe(
@@ -70,16 +77,17 @@ export class DetailComponent implements OnInit {
       return pokemon.abilities.map(ability => ability.ability.name);
     }),
     mergeMap((abilityName) => {
-      return this.pokemonService.getAbilityByNameOrId$(abilityName).pipe(takeUntilDestroyed(this.destroyRef));
+      return this.pokemonService.getAbilityByNameOrId$(abilityName);
     }),
     tap((ability) => {
       this.abilities[ability.name] = ability;
-    })
+    }),
+    takeUntilDestroyed(this.destroyRef)
   );
 
   species$ = this.pokemon$.pipe(
     switchMap((pokemon: PokemonExtended) => {
-      return this.pokemonService.getSpeciesByNameOrId$(pokemon.species.name).pipe(takeUntilDestroyed(this.destroyRef));
+      return this.pokemonService.getSpeciesByNameOrId$(pokemon.species.name);
     }),
     tap((species) => {
       this.species = species;
@@ -87,13 +95,14 @@ export class DetailComponent implements OnInit {
     switchMap((species) => {
       const id = species.evolution_chain.url.split("/").filter(x => x).pop();
       if (id)
-        return this.pokemonService.getEvolutionChainById$(+id).pipe(takeUntilDestroyed(this.destroyRef));
+        return this.pokemonService.getEvolutionChainById$(+id);
       else
         return EMPTY;
     }),
     tap((evolutionChain) => {
       this.evolutionChain = evolutionChain;
-    })
+    }),
+    takeUntilDestroyed(this.destroyRef)
   );
 
   ngOnInit(): void {
@@ -107,4 +116,6 @@ export class DetailComponent implements OnInit {
 
   protected readonly LANGUAGE = LANGUAGE;
   protected readonly DEFAULT_PATH = DEFAULT_PATH;
+  protected readonly UNDERSCORE_REG_EXP = UNDERSCORE_REG_EXP;
+  protected readonly TYPE_MAP = TYPE_MAP;
 }

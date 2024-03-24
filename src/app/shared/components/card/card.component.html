@@ -6,7 +6,7 @@
         <mat-card-title><span>{{ pokemon.name| replace | titlecase }}</span></mat-card-title>
         <div class="flex flex-col justify-center text-center">
           <span class="rounded p-1 bg-gray-200 font-medium">
-            #{{ pokemon.id | number: '4.0-0' | replace: commaRegExp: "" }}
+            #{{ pokemon.id | number: '4.0-0' | replace: COMMA_REG_EXP: "" }}
           </span>
         </div>
       </mat-card-title-group>
