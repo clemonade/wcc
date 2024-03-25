@@ -4,7 +4,7 @@ import {EMPTY, map, merge, mergeMap, switchMap, tap} from "rxjs";
 import {CardComponent} from "../../shared/components/card/card.component";
 import {AsyncPipe, KeyValuePipe, NgTemplateOutlet, TitleCasePipe} from "@angular/common";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {PokemonService} from "../../shared/services/pokemon.service";
+import {PokeApiService} from "../../shared/services/poke-api.service";
 import {Ability, EvolutionChain, PokemonSpecies, Type} from "pokenode-ts";
 import {PokemonExtended} from "../../shared/models/pokemon";
 import {MatChip} from "@angular/material/chips";
@@ -37,7 +37,7 @@ import {TYPE_MAP} from "../../shared/constants/pokemon";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DetailComponent implements OnInit {
-  pokemonService = inject(PokemonService);
+  pokeApiService = inject(PokeApiService);
   activatedRoute = inject(ActivatedRoute);
   changeDetectorRef = inject(ChangeDetectorRef);
   destroyRef = inject(DestroyRef);
@@ -68,7 +68,7 @@ export class DetailComponent implements OnInit {
       return pokemon.types.map(type => type.type.name);
     }),
     mergeMap((typeName) => {
-      return this.pokemonService.getTypeByNameOrId$(typeName);
+      return this.pokeApiService.getTypeByNameOrId$(typeName);
     }),
     tap((type) => {
       this.types[type.name] = type;
@@ -81,7 +81,7 @@ export class DetailComponent implements OnInit {
       return pokemon.abilities.map(ability => ability.ability.name);
     }),
     mergeMap((abilityName) => {
-      return this.pokemonService.getAbilityByNameOrId$(abilityName);
+      return this.pokeApiService.getAbilityByNameOrId$(abilityName);
     }),
     tap((ability) => {
       this.abilities[ability.name] = ability;
@@ -91,7 +91,7 @@ export class DetailComponent implements OnInit {
 
   species$ = this.pokemon$.pipe(
     switchMap((pokemon: PokemonExtended) => {
-      return this.pokemonService.getSpeciesByNameOrId$(pokemon.species.name);
+      return this.pokeApiService.getSpeciesByNameOrId$(pokemon.species.name);
     }),
     tap((species) => {
       this.species = species;
@@ -99,7 +99,7 @@ export class DetailComponent implements OnInit {
     switchMap((species) => {
       const id = species.evolution_chain.url.split("/").filter(x => x).pop();
       if (id)
-        return this.pokemonService.getEvolutionChainById$(+id);
+        return this.pokeApiService.getEvolutionChainById$(+id);
       else
         return EMPTY;
     }),

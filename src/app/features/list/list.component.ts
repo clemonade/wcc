@@ -7,16 +7,14 @@ import {
   OnInit,
   ViewChild
 } from "@angular/core";
-import {PokemonService} from "../../shared/services/pokemon.service";
+import {PokeApiService} from "../../shared/services/poke-api.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {NamedAPIResource} from "pokenode-ts";
 import {
   BehaviorSubject,
-  catchError,
   concatMap,
   debounceTime,
   distinctUntilChanged,
-  EMPTY,
   fromEvent,
   map,
   merge,
@@ -46,7 +44,7 @@ import {CARD_GAP_PX, CARD_HEIGHT_PX, CARD_WIDTH_PX} from "../../core/constants/s
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListComponent implements OnInit {
-  pokemonService = inject(PokemonService);
+  pokeApiService = inject(PokeApiService);
   changeDetectorRef = inject(ChangeDetectorRef);
   destroyRef = inject(DestroyRef);
 
@@ -59,12 +57,10 @@ export class ListComponent implements OnInit {
 
   protected readonly CARD_HEIGHT_PX = CARD_HEIGHT_PX;
 
-  // TODO: add documentation
-  // TODO: add error handling
   // TODO: add search functionality
   pokemons$ = this.offset.pipe(
     concatMap((offset) => {
-      return this.pokemonService.getPokemons$({offset, limit: PAGINATION_PARAMS_LIMIT});
+      return this.pokeApiService.getPokemons$({offset, limit: PAGINATION_PARAMS_LIMIT});
     }),
     tap(({results, count}) => {
       this.pokemons = [...this.pokemons, ...results];
@@ -74,7 +70,7 @@ export class ListComponent implements OnInit {
     switchMap(({results}) => {
       return results.map(pokemon => pokemon.name);
     }),
-    mergeMap(name => this.pokemonService.getPokemonByNameOrId$(name).pipe(catchError(() => EMPTY),)),
+    mergeMap(name => this.pokeApiService.getPokemonByNameOrId$(name)),
     tap((pokemon) => {
       this.pokedex[pokemon.name] = pokemon;
     }),

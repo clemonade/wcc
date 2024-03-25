@@ -1,7 +1,7 @@
 <div class="p-4">
   <button mat-button [routerLink]="['/' + DEFAULT_PATH]">Pokémon List</button>
   @if (pokemon) {
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+    <div class="grid  gap-6 md:grid-cols-3">
       <div class="grid items-center justify-items-center md:col-span-1">
         <app-card [pokemon]="pokemon"></app-card>
       </div>
@@ -27,7 +27,7 @@
         }
 
         <div class="flex flex-col gap-2">
-          <span class="text-xl">Abilities</span>
+          <span class="text-xl underline">Abilities</span>
           @for (ability of pokemon.abilities; track $index) {
             <div class="flex gap-2">
               <span class="text-lg">{{ ability.ability.name | replace | titlecase }}</span>
@@ -37,7 +37,6 @@
             </div>
             @if (abilities[ability.ability.name]) {
               @for (effectEntries of abilities[ability.ability.name].effect_entries; track $index) {
-                <!--TODO: handle language unavailable -->
                 @if (effectEntries.language.name === LANGUAGE) {
                   <div class="flex flex-col gap-1">
                     <span class="text-base">{{ effectEntries.short_effect }}</span>
@@ -50,27 +49,31 @@
         </div>
 
         <div class="flex flex-col gap-2">
-          <span class="text-xl">Type Efficiency</span>
-          @for (type of pokemon.types; track $index) {
-            <span class="text-lg">{{ type.type.name | replace | titlecase }}</span>
-            @if (types[type.type.name]) {
-              <div class="flex flex-col gap-1">
-                @for (damageRelations of types[type.type.name].damage_relations | keyvalue; track $index) {
-                  @if (damageRelations.value.length) {
-                    <div class="flex gap-2 items-center">
-                      <span>{{ damageRelations.key | replace: UNDERSCORE_REG_EXP | titlecase }}</span>
-                      @for (damageRelation of damageRelations.value; track $index) {
-                        <!--TODO: extract tag into separate component-->
-                        <span [class]="'rounded p-1 text-white ' + TYPE_MAP[damageRelation.name]">
+          <span class="text-xl underline">Type Efficiency</span>
+          <div class="grid gap-2 lg:grid-cols-2">
+            @for (type of pokemon.types; track $index) {
+              <div class="flex flex-col gap-2">
+                <span class="text-lg">{{ type.type.name | replace | titlecase }}</span>
+                @if (types[type.type.name]) {
+                  <div class="flex flex-col gap-1">
+                    @for (damageRelations of types[type.type.name].damage_relations | keyvalue; track $index) {
+                      @if (damageRelations.value.length) {
+                        <div class="flex gap-2 items-center">
+                          <span>{{ damageRelations.key | replace: UNDERSCORE_REG_EXP | titlecase }}</span>
+                          @for (damageRelation of damageRelations.value; track $index) {
+                            <!--TODO: extract tag into separate component-->
+                            <span [class]="'rounded p-1 text-white ' + TYPE_MAP[damageRelation.name]">
                           {{ damageRelation.name| replace | titlecase }}
                         </span>
+                          }
+                        </div>
                       }
-                    </div>
-                  }
+                    }
+                  </div>
                 }
               </div>
             }
-          }
+          </div>
         </div>
       </div>
     </div>

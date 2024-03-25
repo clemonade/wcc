@@ -11,17 +11,17 @@ export const STAT_MAP: Record<Stat["name"] | string, { label: string, background
   "speed": {label: "Speed", backgroundColor: "bg-pink-200"},
 };
 
-// TODO: color match
+// KIV: proper colour matching
 export const TYPE_MAP: Record<string, string> = {
   normal: "bg-slate-400",
   fighting: "bg-orange-600",
-  flying: "bg-cyan-600",
+  flying: "bg-sky-600",
   poison: "bg-purple-600",
   ground: "bg-amber-600",
   rock: "bg-stone-600",
   bug: "bg-lime-600",
   ghost: "bg-violet-600",
-  steel: "bg-sky-600",
+  steel: "bg-cyan-600",
   fire: "bg-red-600",
   water: "bg-blue-600",
   grass: "bg-green-600",

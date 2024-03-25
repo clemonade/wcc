@@ -1,7 +1,7 @@
 import {ResolveFn, Router} from "@angular/router";
 import {DETAIL_ROUTE_PARAM, ERROR_PATH, NAVIGATE_STATE_ERROR_MESSAGE} from "../../core/constants/app";
 import {DestroyRef, inject} from "@angular/core";
-import {PokemonService} from "../services/pokemon.service";
+import {PokeApiService} from "../services/poke-api.service";
 import {catchError, EMPTY, map, take} from "rxjs";
 import {PokemonExtended} from "../models/pokemon";
 import {POKEMON_NOT_FOUND_ERROR_MESSAGE} from "../constants/pokemon";
@@ -11,7 +11,7 @@ export const pokemonResolver: ResolveFn<PokemonExtended> = (route) => {
   const router = inject(Router);
   const destroyRef = inject(DestroyRef);
 
-  return inject(PokemonService).getPokemonByNameOrId$(route.params[DETAIL_ROUTE_PARAM]).pipe(
+  return inject(PokeApiService).getPokemonByNameOrId$(route.params[DETAIL_ROUTE_PARAM], true).pipe(
     take(1),
     map((result) => {
       return result;
