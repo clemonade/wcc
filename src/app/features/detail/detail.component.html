@@ -1,11 +1,11 @@
 <div class="p-4">
   <button mat-button [routerLink]="['/' + DEFAULT_PATH]">Pokémon List</button>
   @if (pokemon) {
-    <div class="flex justify-evenly flex-wrap gap-4">
-      <div class="flex flex-col justify-center">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div class="grid items-center justify-items-center md:col-span-1 ">
         <app-card [pokemon]="pokemon"></app-card>
       </div>
-      <div class="flex flex-col gap-6">
+      <div class="grid gap-6 md:col-span-2">
         @if (evolutionChain?.chain) {
           <div class="flex gap-4 flex-wrap justify-center items-center">
             <ng-container [ngTemplateOutlet]="chainTemplate"
@@ -15,7 +15,7 @@
           <ng-template #chainTemplate let-chain>
             <button mat-button [routerLink]="['/' + DEFAULT_PATH + '/' + chain.species.name]">
             <span
-              [class.text-xl]="chain.species.name === pokemon.name">{{ chain.species.name | replace | titlecase }}</span>
+              [class.text-lg]="chain.species.name === pokemon.name">{{ chain.species.name | replace | titlecase }}</span>
             </button>
             @if (chain.evolves_to.length) {
               <mat-icon fontIcon="arrow_forward"></mat-icon>
@@ -29,7 +29,12 @@
         <div class="flex flex-col gap-2">
           <span class="text-xl">Abilities</span>
           @for (ability of pokemon.abilities; track $index) {
-            <span class="text-lg">{{ ability.ability.name | replace | titlecase }}</span>
+            <div class="flex gap-2">
+              <span class="text-lg">{{ ability.ability.name | replace | titlecase }}</span>
+              @if (ability.is_hidden) {
+                <span class="rounded p-1 bg-gray-200">HA</span>
+              }
+            </div>
             @if (abilities[ability.ability.name]) {
               @for (effectEntries of abilities[ability.ability.name].effect_entries; track $index) {
                 <!--TODO: handle language unavailable -->
