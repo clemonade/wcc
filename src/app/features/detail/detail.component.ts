@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, injec
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {EMPTY, map, merge, mergeMap, switchMap, tap} from "rxjs";
 import {CardComponent} from "../../shared/components/card/card.component";
-import {AsyncPipe, JsonPipe, KeyValuePipe, NgTemplateOutlet, TitleCasePipe} from "@angular/common";
+import {AsyncPipe, KeyValuePipe, NgTemplateOutlet, TitleCasePipe} from "@angular/common";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {PokemonService} from "../../shared/services/pokemon.service";
 import {Ability, EvolutionChain, PokemonSpecies, Type} from "pokenode-ts";
@@ -23,7 +23,6 @@ import {TYPE_MAP} from "../../shared/constants/pokemon";
     CardComponent,
     AsyncPipe,
     KeyValuePipe,
-    JsonPipe,
     MatChip,
     MatBadge,
     NgTemplateOutlet,
@@ -48,6 +47,11 @@ export class DetailComponent implements OnInit {
   abilities: Record<string, Ability> = {};
   species?: PokemonSpecies;
   evolutionChain?: EvolutionChain;
+
+  protected readonly LANGUAGE = LANGUAGE;
+  protected readonly DEFAULT_PATH = DEFAULT_PATH;
+  protected readonly UNDERSCORE_REG_EXP = UNDERSCORE_REG_EXP;
+  protected readonly TYPE_MAP = TYPE_MAP;
 
   pokemon$ = this.activatedRoute.data.pipe(
     map(({pokemon}) => {
@@ -113,9 +117,4 @@ export class DetailComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe();
   }
-
-  protected readonly LANGUAGE = LANGUAGE;
-  protected readonly DEFAULT_PATH = DEFAULT_PATH;
-  protected readonly UNDERSCORE_REG_EXP = UNDERSCORE_REG_EXP;
-  protected readonly TYPE_MAP = TYPE_MAP;
 }

@@ -26,7 +26,7 @@ import {COMMA_REG_EXP} from "../../constants/utils";
 })
 export class CardComponent {
   @Input() pokemon?: PokemonExtended;
-  protected readonly STAT_LABELS = STAT_MAP;
+  protected readonly STAT_MAP = STAT_MAP;
   protected readonly TYPE_MAP = TYPE_MAP;
   protected readonly COMMA_REG_EXP = COMMA_REG_EXP;
 }

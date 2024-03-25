@@ -1,12 +1,15 @@
 import {ResolveFn, Router} from "@angular/router";
-import {DEFAULT_PATH, DETAIL_ROUTE_PARAM} from "../../core/constants/app";
-import {inject} from "@angular/core";
+import {DETAIL_ROUTE_PARAM, ERROR_PATH, NAVIGATE_STATE_ERROR_MESSAGE} from "../../core/constants/app";
+import {DestroyRef, inject} from "@angular/core";
 import {PokemonService} from "../services/pokemon.service";
 import {catchError, EMPTY, map, take} from "rxjs";
 import {PokemonExtended} from "../models/pokemon";
+import {POKEMON_NOT_FOUND_ERROR_MESSAGE} from "../constants/pokemon";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 export const pokemonResolver: ResolveFn<PokemonExtended> = (route) => {
   const router = inject(Router);
+  const destroyRef = inject(DestroyRef);
 
   return inject(PokemonService).getPokemonByNameOrId$(route.params[DETAIL_ROUTE_PARAM]).pipe(
     take(1),
@@ -14,8 +17,13 @@ export const pokemonResolver: ResolveFn<PokemonExtended> = (route) => {
       return result;
     }),
     catchError(() => {
-      router.navigate([DEFAULT_PATH]); // TODO: navigate to error page
+      router.navigate([ERROR_PATH], {
+        state: {
+          [NAVIGATE_STATE_ERROR_MESSAGE]: POKEMON_NOT_FOUND_ERROR_MESSAGE
+        }
+      });
       return EMPTY;
-    })
+    }),
+    takeUntilDestroyed(destroyRef)
   );
 };

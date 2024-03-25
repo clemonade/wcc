@@ -47,8 +47,8 @@
 
         <div class="grid grid-cols-3 gap-2">
           @for (stat of pokemon.stats; track $index) {
-            <div [class]="'grid grid-rows-2 p-0.5 rounded text-center ' + STAT_LABELS[stat.stat.name].backgroundColor">
-              <span>{{ STAT_LABELS[stat.stat.name].label }}</span>
+            <div [class]="'grid grid-rows-2 p-0.5 rounded text-center ' + STAT_MAP[stat.stat.name].backgroundColor">
+              <span>{{ STAT_MAP[stat.stat.name].label }}</span>
               <span>{{ stat.base_stat }}</span>
             </div>
           }

@@ -1,5 +1,7 @@
 import {Stat} from "pokenode-ts";
 
+export const POKEMON_NOT_FOUND_ERROR_MESSAGE = "The Pokémon you're searching for could not be found.";
+
 export const STAT_MAP: Record<Stat["name"] | string, { label: string, backgroundColor?: string }> = {
   "hp": {label: "HP", backgroundColor: "bg-red-200"},
   "attack": {label: "Atk", backgroundColor: "bg-orange-200"},

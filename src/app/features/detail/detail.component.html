@@ -1,13 +1,13 @@
 <div class="p-4">
   <button mat-button [routerLink]="['/' + DEFAULT_PATH]">Pokémon List</button>
   @if (pokemon) {
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <div class="grid items-center justify-items-center md:col-span-1 ">
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div class="grid items-center justify-items-center md:col-span-1">
         <app-card [pokemon]="pokemon"></app-card>
       </div>
       <div class="grid gap-6 md:col-span-2">
         @if (evolutionChain?.chain) {
-          <div class="flex gap-4 flex-wrap justify-center items-center">
+          <div class="flex gap-2 flex-wrap justify-center items-center">
             <ng-container [ngTemplateOutlet]="chainTemplate"
                           [ngTemplateOutletContext]="{$implicit: evolutionChain?.chain}">
             </ng-container>
@@ -76,7 +76,9 @@
     </div>
   }
 </div>
-<!--TODO: crawl sprite variants-->
+
+<!--TODO: crawl sprite variants?-->
+
 <!--  @if (pokemon.sprites.other.showdown) {-->
 <!--    @for (sprite of pokemon.sprites.other.showdown | keyvalue; track $index) {-->
 <!--      @if (sprite.value) {-->
