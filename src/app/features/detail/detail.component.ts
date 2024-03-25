@@ -15,6 +15,7 @@ import {MatIcon} from "@angular/material/icon";
 import {ReplacePipe} from "../../shared/pipes/replace.pipe";
 import {UNDERSCORE_REG_EXP} from "../../shared/constants/utils";
 import {TYPE_MAP} from "../../shared/constants/pokemon";
+import {TagComponent} from "../../shared/components/tag/tag.component";
 
 @Component({
   selector: "app-detail",
@@ -30,7 +31,8 @@ import {TYPE_MAP} from "../../shared/constants/pokemon";
     MatButton,
     MatIcon,
     ReplacePipe,
-    TitleCasePipe
+    TitleCasePipe,
+    TagComponent
   ],
   templateUrl: "./detail.component.html",
   styleUrl: "./detail.component.scss",

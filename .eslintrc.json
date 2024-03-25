@@ -1,4 +1,5 @@
 //TODO: add finnish rule
+//TODO: add prettier rule
 {
   "root": true,
   "ignorePatterns": [

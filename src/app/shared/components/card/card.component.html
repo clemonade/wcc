@@ -27,9 +27,10 @@
 
           <div class="flex justify-center gap-2">
             @for (type of pokemon.types; track $index) {
-              <span [class]="'rounded p-1 text-white ' + TYPE_MAP[type.type.name]">
-                {{ type.type.name| replace | titlecase }}
-              </span>
+              <app-tag text="{{type.type.name| replace | titlecase}}"
+                       textColor="text-white"
+                       [backgroundColor]="TYPE_MAP[type.type.name]">
+              </app-tag>
             }
           </div>
         </div>

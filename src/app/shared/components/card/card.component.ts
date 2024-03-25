@@ -5,6 +5,7 @@ import {STAT_MAP, TYPE_MAP} from "../../constants/pokemon";
 import {DecimalPipe, SlicePipe, TitleCasePipe} from "@angular/common";
 import {ReplacePipe} from "../../pipes/replace.pipe";
 import {COMMA_REG_EXP} from "../../constants/utils";
+import {TagComponent} from "../tag/tag.component";
 
 @Component({
   selector: "app-card",
@@ -19,6 +20,7 @@ import {COMMA_REG_EXP} from "../../constants/utils";
     SlicePipe,
     ReplacePipe,
     DecimalPipe,
+    TagComponent,
   ],
   templateUrl: "./card.component.html",
   styleUrl: "./card.component.scss",
