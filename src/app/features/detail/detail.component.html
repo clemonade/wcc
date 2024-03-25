@@ -1,5 +1,7 @@
-<div class="p-4">
-  <button mat-button [routerLink]="['/' + DEFAULT_PATH]">Pokémon List</button>
+<div class="flex flex-col gap-4 p-4">
+  <div class="flex justify-center">
+    <button mat-button [routerLink]="['/' + DEFAULT_PATH]">Pokémon List</button>
+  </div>
   @if (pokemon) {
     <div class="grid  gap-4 md:grid-cols-3">
       <div class="grid items-center justify-items-center md:col-span-1">
