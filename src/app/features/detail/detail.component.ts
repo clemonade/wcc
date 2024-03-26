@@ -7,15 +7,14 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {PokeApiService} from "../../shared/services/poke-api.service";
 import {Ability, EvolutionChain, PokemonSpecies, Type} from "pokenode-ts";
 import {PokemonExtended} from "../../shared/models/pokemon";
-import {MatChip} from "@angular/material/chips";
 import {DEFAULT_PATH, LANGUAGE} from "../../core/constants/app";
-import {MatBadge} from "@angular/material/badge";
-import {MatButton} from "@angular/material/button";
+import {MatAnchor, MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {ReplacePipe} from "../../shared/pipes/replace.pipe";
 import {UNDERSCORE_REG_EXP} from "../../shared/constants/utils";
 import {TYPE_MAP} from "../../shared/constants/pokemon";
 import {TagComponent} from "../../shared/components/tag/tag.component";
+import {SearchComponent} from "../../shared/components/search/search.component";
 
 @Component({
   selector: "app-detail",
@@ -24,15 +23,15 @@ import {TagComponent} from "../../shared/components/tag/tag.component";
     CardComponent,
     AsyncPipe,
     KeyValuePipe,
-    MatChip,
-    MatBadge,
     NgTemplateOutlet,
     RouterLink,
     MatButton,
     MatIcon,
     ReplacePipe,
     TitleCasePipe,
-    TagComponent
+    TagComponent,
+    MatAnchor,
+    SearchComponent
   ],
   templateUrl: "./detail.component.html",
   styleUrl: "./detail.component.scss",
@@ -62,7 +61,6 @@ export class DetailComponent implements OnInit {
     tap((pokemon) => {
       this.pokemon = pokemon;
     }),
-    takeUntilDestroyed(this.destroyRef)
   );
 
   types$ = this.pokemon$.pipe(
@@ -75,7 +73,6 @@ export class DetailComponent implements OnInit {
     tap((type) => {
       this.types[type.name] = type;
     }),
-    takeUntilDestroyed(this.destroyRef)
   );
 
   abilities$ = this.pokemon$.pipe(
@@ -88,7 +85,6 @@ export class DetailComponent implements OnInit {
     tap((ability) => {
       this.abilities[ability.name] = ability;
     }),
-    takeUntilDestroyed(this.destroyRef)
   );
 
   species$ = this.pokemon$.pipe(
@@ -108,7 +104,6 @@ export class DetailComponent implements OnInit {
     tap((evolutionChain) => {
       this.evolutionChain = evolutionChain;
     }),
-    takeUntilDestroyed(this.destroyRef)
   );
 
   ngOnInit(): void {

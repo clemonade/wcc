@@ -1,0 +1,12 @@
+<span mat-dialog-title>Search Pokémon</span>
+<mat-dialog-content class="mat-typography">
+  <div class="flex flex-col gap-4">
+    <mat-form-field class="w-full">
+      <mat-label>Pokémon name or #</mat-label>
+      <input matInput [formControl]="formControl">
+    </mat-form-field>
+    <a class="cursor-pointer" [routerLink]="['/' + DEFAULT_PATH + '/' + pokemon?.id]">
+      <app-card [pokemon]="pokemon"></app-card>
+    </a>
+  </div>
+</mat-dialog-content>

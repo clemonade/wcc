@@ -17,11 +17,12 @@
               </ng-container>
             </div>
             <ng-template #chainTemplate let-chain>
-              <button mat-button [routerLink]="['/' + DEFAULT_PATH + '/' + chain.species.name]">
+              <!--TODO: navigate with id; add pipe to extract id from url-->
+              <a mat-button [routerLink]="['/' + DEFAULT_PATH + '/' + chain.species.name]">
                 <span
                   [class.text-lg]="chain.species.name === pokemon.name">{{ chain.species.name | replace | titlecase }}
                 </span>
-              </button>
+              </a>
               @if (chain.evolves_to.length) {
                 <mat-icon fontIcon="arrow_forward"></mat-icon>
                 <ng-container [ngTemplateOutlet]="chainTemplate"
@@ -85,6 +86,7 @@
     </div>
   }
 </div>
+<app-search></app-search>
 
 <!--TODO: crawl sprite variants-->
 

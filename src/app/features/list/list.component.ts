@@ -28,6 +28,7 @@ import {CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport} fr
 import {DEFAULT_PATH, PAGINATION_PARAMS_LIMIT, WINDOWS_RESIZE_DEBOUNCE_TIME} from "../../core/constants/app";
 import {RouterLink} from "@angular/router";
 import {CARD_GAP_PX, CARD_HEIGHT_PX, CARD_WIDTH_PX} from "../../core/constants/style";
+import {SearchComponent} from "../../shared/components/search/search.component";
 
 @Component({
   selector: "app-list",
@@ -37,7 +38,8 @@ import {CARD_GAP_PX, CARD_HEIGHT_PX, CARD_WIDTH_PX} from "../../core/constants/s
     CdkVirtualScrollViewport,
     CdkFixedSizeVirtualScroll,
     CdkVirtualForOf,
-    RouterLink
+    RouterLink,
+    SearchComponent
   ],
   templateUrl: "./list.component.html",
   styleUrl: "./list.component.scss",
@@ -74,7 +76,6 @@ export class ListComponent implements OnInit {
     tap((pokemon) => {
       this.pokedex[pokemon.name] = pokemon;
     }),
-    takeUntilDestroyed(this.destroyRef)
   );
 
   windowResize$ = fromEvent(window, "resize").pipe(
@@ -86,7 +87,6 @@ export class ListComponent implements OnInit {
     tap(() => {
       this.chunkPokemons();
     }),
-    takeUntilDestroyed(this.destroyRef)
   );
 
   @ViewChild(CdkVirtualScrollViewport)
