@@ -44,7 +44,7 @@ export class SearchComponent implements OnDestroy{
     this.matDialog.closeAll();
   }
 
-  openSearchDialog() {
+  openSearchDialog(): void {
     this.matDialog.open(SearchDialogComponent);
   }
 }
@@ -80,7 +80,7 @@ export class SearchDialogComponent implements OnInit {
     // TODO: map to allow leading zeroes if id, etc.
     distinctUntilChanged(),
     filter((value): value is string => !!value),
-    switchMap((value) => this.pokeApiService.getPokemonByNameOrId$(value, true).pipe(
+    switchMap((value) => this.pokeApiService.getPokemonByNameOrId$(value, {error: true}).pipe(
       catchError(() => of(undefined))
     )),
     tap((pokemon) => this.pokemon = pokemon),

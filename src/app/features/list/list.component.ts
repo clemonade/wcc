@@ -58,6 +58,7 @@ export class ListComponent implements OnInit {
   end = false;
 
   protected readonly CARD_HEIGHT_PX = CARD_HEIGHT_PX;
+  protected readonly DEFAULT_PATH = DEFAULT_PATH;
 
   // TODO: add search functionality
   pokemons$ = this.offset.pipe(
@@ -125,6 +126,5 @@ export class ListComponent implements OnInit {
     return Math.floor((window.innerWidth - (cardsPerRow * CARD_GAP_PX)) / CARD_WIDTH_PX) || 1;
   }
 
-  trackByIndex = (index: number) => index;
-  protected readonly DEFAULT_PATH = DEFAULT_PATH;
+  trackByIndex = (index: number): number => index;
 }

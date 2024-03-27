@@ -11,7 +11,7 @@ export const pokemonResolver: ResolveFn<PokemonExtended> = (route) => {
   const router = inject(Router);
   const destroyRef = inject(DestroyRef);
 
-  return inject(PokeApiService).getPokemonByNameOrId$(route.params[DETAIL_ROUTE_PARAM], true).pipe(
+  return inject(PokeApiService).getPokemonByNameOrId$(route.params[DETAIL_ROUTE_PARAM], {error: true}).pipe(
     take(1),
     map((result) => {
       return result;
