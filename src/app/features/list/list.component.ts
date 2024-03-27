@@ -52,7 +52,7 @@ export class ListComponent implements OnInit {
 
   pokemons: NamedAPIResource[] = [];
   chunkedPokemons: NamedAPIResource[][] = [];
-  pokedex: Record<string, PokemonExtended> = {};
+  pokedex: Record<string, PokemonExtended | undefined> = {};
 
   offset = new BehaviorSubject(0);
   end = false;
@@ -60,7 +60,6 @@ export class ListComponent implements OnInit {
   protected readonly CARD_HEIGHT_PX = CARD_HEIGHT_PX;
   protected readonly DEFAULT_PATH = DEFAULT_PATH;
 
-  // TODO: add search functionality
   pokemons$ = this.offset.pipe(
     concatMap((offset) => {
       return this.pokeApiService.getPokemons$({offset, limit: PAGINATION_PARAMS_LIMIT});

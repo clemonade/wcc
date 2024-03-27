@@ -1,15 +1,15 @@
 import {Pipe, PipeTransform} from "@angular/core";
-import {DASH_REG_EXP} from "../constants/utils";
+import {Nil} from "../../core/models/app";
+import {DASH_REG_EXP} from "../../core/constants/app";
 
 @Pipe({
   name: "replace",
   standalone: true
 })
 export class ReplacePipe implements PipeTransform {
-  transform(value: string | null | undefined, regExp: RegExp = DASH_REG_EXP, replacement: string = " "): string | null | undefined {
-    if (typeof value === "string")
-      return value.replace(regExp, replacement);
-    return value;
+  transform(value: Nil<string>, regExp: RegExp = DASH_REG_EXP, replacement: string = " "): Nil<string> {
+    return typeof value === "string"
+      ? value.replace(regExp, replacement)
+      : value;
   }
-
 }

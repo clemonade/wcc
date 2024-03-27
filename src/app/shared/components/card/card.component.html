@@ -1,60 +1,75 @@
-<!--TODO: add skeleton-->
-@if (pokemon) {
+@if (pokemon && link) {
+  <a class="cursor-pointer" [routerLink]="[link]">
+    <ng-container *ngTemplateOutlet="card"></ng-container>
+  </a>
+} @else {
+  <ng-container *ngTemplateOutlet="card"></ng-container>
+}
+<ng-template #card>
   <mat-card class="w-64 h-96">
-    <mat-card-header>
-      <mat-card-title-group>
-        <mat-card-title><span>{{ pokemon.name| replace | titlecase }}</span></mat-card-title>
-        <div class="flex flex-col justify-center text-center">
+    @if (pokemon) {
+      <mat-card-header>
+        <mat-card-title-group>
+          <mat-card-title><span>{{ pokemon.name| replace | titlecase }}</span></mat-card-title>
+          <div class="flex flex-col justify-center text-center">
           <span class="rounded p-1 bg-gray-200 font-medium">
             #{{ pokemon.id | number: '4.0-0' | replace: COMMA_REG_EXP: "" }}
           </span>
-        </div>
-      </mat-card-title-group>
-    </mat-card-header>
-    <mat-card-content class="h-full">
-      <div class="flex flex-col justify-between h-full">
-        <div class="flex flex-col gap-3">
-          <!--TODO: handle no image-->
-          @if (pokemon.sprites.other.showdown?.front_default ?? pokemon.sprites.front_default) {
-            <div class="flex justify-center h-28">
-              <div class="flex flex-col justify-end">
-                <img class="max-h-28"
-                     [src]="pokemon.sprites.other.showdown?.front_default ?? pokemon.sprites.front_default"
-                     [alt]="pokemon.name"/>
+          </div>
+        </mat-card-title-group>
+      </mat-card-header>
+      <mat-card-content class="h-full">
+        <div class="flex flex-col justify-between h-full">
+          <div class="flex flex-col gap-3">
+            <!--TODO: handle no image-->
+            @if (pokemon.sprites.other?.showdown?.front_default ?? pokemon.sprites.front_default) {
+              <div class="flex justify-center h-28">
+                <div class="flex flex-col justify-end">
+                  <img class="max-h-28"
+                       [src]="pokemon.sprites.other?.showdown?.front_default ?? pokemon.sprites.front_default"
+                       [alt]="pokemon.name"/>
+                </div>
               </div>
-            </div>
-          }
+            }
 
-          <div class="flex justify-center gap-2">
-            @for (type of pokemon.types; track $index) {
-              <app-tag text="{{type.type.name| replace | titlecase}}"
-                       textColor="text-white"
-                       [backgroundColor]="TYPE_MAP[type.type.name]">
-              </app-tag>
+            <div class="flex justify-center gap-2">
+              @for (type of pokemon.types; track $index) {
+                <app-tag text="{{type.type.name| replace | titlecase}}"
+                         textColor="text-white"
+                         [backgroundColor]="TYPE_MAP[type.type.name]">
+                </app-tag>
+              }
+            </div>
+          </div>
+
+          <div class="flex justify-around gap-2">
+            @for (ability of pokemon.abilities| slice: 0: 2; track $index) {
+              <div class="flex flex-col justify-center text-center">
+                <span>{{ ability.ability.name | replace | titlecase }}</span>
+                @if (ability.is_hidden) {
+                  <span class="mat-caption">Hidden Ability</span>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="grid grid-cols-3 gap-2">
+            @for (stat of pokemon.stats; track $index) {
+              <div [class]="'grid grid-rows-2 p-0.5 rounded text-center ' + STAT_MAP[stat.stat.name].backgroundColor">
+                <span>{{ STAT_MAP[stat.stat.name].label }}</span>
+                <span>{{ stat.base_stat }}</span>
+              </div>
             }
           </div>
         </div>
-
-        <div class="flex justify-around gap-2">
-          @for (ability of pokemon.abilities| slice: 0: 2; track $index) {
-            <div class="flex flex-col justify-center text-center">
-              <span>{{ ability.ability.name | replace | titlecase }}</span>
-              @if (ability.is_hidden) {
-                <span class="mat-caption">Hidden Ability</span>
-              }
-            </div>
-          }
+      </mat-card-content>
+    } @else {
+      <!--TODO: add skeleton-->
+      <mat-card-content class="h-full">
+        <div class="h-full flex justify-center items-center">
+          <span>Who's that Pokémon?</span>
         </div>
-
-        <div class="grid grid-cols-3 gap-2">
-          @for (stat of pokemon.stats; track $index) {
-            <div [class]="'grid grid-rows-2 p-0.5 rounded text-center ' + STAT_MAP[stat.stat.name].backgroundColor">
-              <span>{{ STAT_MAP[stat.stat.name].label }}</span>
-              <span>{{ stat.base_stat }}</span>
-            </div>
-          }
-        </div>
-      </div>
-    </mat-card-content>
+      </mat-card-content>
+    }
   </mat-card>
-}
+</ng-template>

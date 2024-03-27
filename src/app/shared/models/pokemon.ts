@@ -8,7 +8,7 @@ export type PokemonPaginationParams = Partial<{
 // incomplete typing from wrapper library
 export type PokemonExtended = Pokemon & {
   sprites: {
-    other: {
+    other?: {
       showdown?: Omit<PokemonSprites, "other" | "versions">
     }
   }

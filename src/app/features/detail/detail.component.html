@@ -17,10 +17,9 @@
               </ng-container>
             </div>
             <ng-template #chainTemplate let-chain>
-              <!--TODO: navigate with id; add pipe to extract id from url-->
-              <a mat-button [routerLink]="['/' + DEFAULT_PATH + '/' + chain.species.name]">
+              <a mat-button [routerLink]="['/' + DEFAULT_PATH + '/' + (chain.species.url | urlId)]">
                 <span
-                  [class.text-lg]="chain.species.name === pokemon.name">{{ chain.species.name | replace | titlecase }}
+                  [class.text-lg]="(chain.species.url | urlId) === pokemon.id.toString()">{{ chain.species.name | replace | titlecase }}
                 </span>
               </a>
               @if (chain.evolves_to.length) {

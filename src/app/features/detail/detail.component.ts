@@ -7,14 +7,14 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {PokeApiService} from "../../shared/services/poke-api.service";
 import {Ability, EvolutionChain, PokemonSpecies, Type} from "pokenode-ts";
 import {PokemonExtended} from "../../shared/models/pokemon";
-import {DEFAULT_PATH, LANGUAGE} from "../../core/constants/app";
+import {DEFAULT_PATH, LANGUAGE, UNDERSCORE_REG_EXP} from "../../core/constants/app";
 import {MatAnchor, MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {ReplacePipe} from "../../shared/pipes/replace.pipe";
-import {UNDERSCORE_REG_EXP} from "../../shared/constants/utils";
 import {TYPE_MAP} from "../../shared/constants/pokemon";
 import {TagComponent} from "../../shared/components/tag/tag.component";
 import {SearchComponent} from "../../shared/components/search/search.component";
+import {UrlIdPipe} from "../../shared/pipes/urlId.pipe";
 
 @Component({
   selector: "app-detail",
@@ -31,14 +31,17 @@ import {SearchComponent} from "../../shared/components/search/search.component";
     TitleCasePipe,
     TagComponent,
     MatAnchor,
-    SearchComponent
+    SearchComponent,
+    UrlIdPipe
   ],
   templateUrl: "./detail.component.html",
   styleUrl: "./detail.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [UrlIdPipe]
 })
 export class DetailComponent implements OnInit {
   pokeApiService = inject(PokeApiService);
+  idPipe = inject(UrlIdPipe);
   activatedRoute = inject(ActivatedRoute);
   changeDetectorRef = inject(ChangeDetectorRef);
   destroyRef = inject(DestroyRef);
@@ -95,7 +98,7 @@ export class DetailComponent implements OnInit {
       this.species = species;
     }),
     switchMap((species) => {
-      const id = species.evolution_chain.url.split("/").filter(x => x).pop();
+      const id = this.idPipe.transform(species.evolution_chain.url);
       if (id)
         return this.pokeApiService.getEvolutionChainById$(+id);
       else

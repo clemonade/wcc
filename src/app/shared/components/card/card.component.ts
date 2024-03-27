@@ -2,10 +2,11 @@ import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
 import {PokemonExtended} from "../../models/pokemon";
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle, MatCardTitleGroup} from "@angular/material/card";
 import {STAT_MAP, TYPE_MAP} from "../../constants/pokemon";
-import {DecimalPipe, SlicePipe, TitleCasePipe} from "@angular/common";
+import {DecimalPipe, NgTemplateOutlet, SlicePipe, TitleCasePipe} from "@angular/common";
 import {ReplacePipe} from "../../pipes/replace.pipe";
-import {COMMA_REG_EXP} from "../../constants/utils";
 import {TagComponent} from "../tag/tag.component";
+import {COMMA_REG_EXP, DEFAULT_PATH} from "../../../core/constants/app";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: "app-card",
@@ -21,6 +22,8 @@ import {TagComponent} from "../tag/tag.component";
     ReplacePipe,
     DecimalPipe,
     TagComponent,
+    NgTemplateOutlet,
+    RouterLink,
   ],
   templateUrl: "./card.component.html",
   styleUrl: "./card.component.scss",
@@ -28,7 +31,9 @@ import {TagComponent} from "../tag/tag.component";
 })
 export class CardComponent {
   @Input() pokemon?: PokemonExtended;
+  @Input() link?: string;
   protected readonly STAT_MAP = STAT_MAP;
   protected readonly TYPE_MAP = TYPE_MAP;
   protected readonly COMMA_REG_EXP = COMMA_REG_EXP;
+  protected readonly DEFAULT_PATH = DEFAULT_PATH;
 }

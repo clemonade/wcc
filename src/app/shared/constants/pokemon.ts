@@ -35,4 +35,6 @@ export const TYPE_MAP: Record<string, string> = {
   shadow: "bg-gray-600",
 };
 
+// #0001, bulbasaur, Bulbasaur, 1, 0001, nidoran-f, `nidoran f`
+export const SEARCH_REG_EXP = /^(?:#[0-9]+|[a-zA-Z0-9-\s]+)$/;
 

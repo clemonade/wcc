@@ -7,18 +7,20 @@ import {
   OnDestroy,
   OnInit
 } from "@angular/core";
-import {MatFabButton} from "@angular/material/button";
+import {MatButton, MatFabButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
-import {MatDialog, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
+import {MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
 import {FormBuilder, ReactiveFormsModule} from "@angular/forms";
-import {catchError, debounceTime, distinctUntilChanged, filter, of, switchMap, tap} from "rxjs";
-import {DEFAULT_PATH, SEARCH_DEBOUNCE_TIME} from "../../../core/constants/app";
+import {catchError, debounceTime, distinctUntilChanged, filter, map, of, switchMap, tap} from "rxjs";
+import {DEFAULT_PATH, SEARCH_DEBOUNCE_TIME, WHITESPACE_REG_EXP} from "../../../core/constants/app";
 import {PokeApiService} from "../../services/poke-api.service";
 import {PokemonExtended} from "../../models/pokemon";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {CardComponent} from "../card/card.component";
-import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
+import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/input";
 import {RouterLink} from "@angular/router";
+import {MatProgressBar} from "@angular/material/progress-bar";
+import {SEARCH_REG_EXP} from "../../constants/pokemon";
 
 @Component({
   selector: "app-search",
@@ -34,10 +36,9 @@ import {RouterLink} from "@angular/router";
       </button>
     </div>
   `,
-  styleUrl: "./search.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchComponent implements OnDestroy{
+export class SearchComponent implements OnDestroy {
   matDialog = inject(MatDialog);
 
   ngOnDestroy(): void {
@@ -59,7 +60,12 @@ export class SearchComponent implements OnDestroy{
     MatLabel,
     ReactiveFormsModule,
     MatFormField,
-    RouterLink
+    MatError,
+    RouterLink,
+    MatDialogClose,
+    MatButton,
+    MatDialogActions,
+    MatProgressBar
   ],
   templateUrl: "./search.component.html",
   styleUrl: "./search.component.scss",
@@ -70,20 +76,39 @@ export class SearchDialogComponent implements OnInit {
   changeDetectorRef = inject(ChangeDetectorRef);
   destroyRef = inject(DestroyRef);
 
-  formControl = new FormBuilder().control("");
+  formControl = new FormBuilder().control("", {nonNullable: true});
   pokemon?: PokemonExtended;
+  loading = false;
 
   protected readonly DEFAULT_PATH = DEFAULT_PATH;
 
   formControlValueChanges$ = this.formControl.valueChanges.pipe(
+    tap(() => this.formControl.setErrors(null)),
     debounceTime(SEARCH_DEBOUNCE_TIME),
-    // TODO: map to allow leading zeroes if id, etc.
+    // TODO: form control validator too
+    filter((value) => SEARCH_REG_EXP.test(value)),
+    // transform to valid params
+    map((value) => {
+      const handleNumber = (val: string): string => !isNaN(+val)
+        ? (+val).toString()
+        : val.trim().toLowerCase().replace(WHITESPACE_REG_EXP, "-");
+      return value.startsWith("#") ? handleNumber(value.slice(1)) : handleNumber(value);
+    }),
     distinctUntilChanged(),
-    filter((value): value is string => !!value),
-    switchMap((value) => this.pokeApiService.getPokemonByNameOrId$(value, {error: true}).pipe(
-      catchError(() => of(undefined))
+    tap(() => {
+      this.loading = true;
+      this.changeDetectorRef.markForCheck();
+    }),
+    switchMap((value) => this.pokeApiService.getPokemonByNameOrId$(value, {loading: true, error: true}).pipe(
+      catchError(() => {
+        this.formControl.setErrors({});
+        return of(undefined);
+      })
     )),
-    tap((pokemon) => this.pokemon = pokemon),
+    tap((pokemon) => {
+      this.pokemon = pokemon;
+      this.loading = false;
+    }),
   );
 
   ngOnInit(): void {
