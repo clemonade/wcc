@@ -21,14 +21,15 @@
       <mat-card-content class="h-full">
         <div class="flex flex-col justify-between h-full">
           <div class="flex flex-col gap-3">
-            <!--TODO: handle no image-->
             @if (pokemon.sprites.other?.showdown?.front_default ?? pokemon.sprites.front_default) {
-              <div class="flex justify-center h-28">
-                <div class="flex flex-col justify-end">
-                  <img class="max-h-28"
-                       [src]="pokemon.sprites.other?.showdown?.front_default ?? pokemon.sprites.front_default"
-                       [alt]="pokemon.name"/>
-                </div>
+              <div class="flex justify-center items-end h-28">
+                <img class="max-h-28"
+                     [src]="pokemon.sprites.other?.showdown?.front_default ?? pokemon.sprites.front_default"
+                     [alt]="pokemon.name"/>
+              </div>
+            } @else {
+              <div class="flex justify-center items-center h-28">
+                <mat-icon fontIcon="error"></mat-icon>
               </div>
             }
 

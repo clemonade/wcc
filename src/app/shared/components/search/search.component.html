@@ -1,13 +1,19 @@
 <span mat-dialog-title>Search Pokémon</span>
 <div class="px-6 pb-5">
   <div class="flex flex-col gap-4">
-    <mat-form-field class="w-full">
-      <mat-label>Name or #</mat-label>
-      <input matInput [formControl]="formControl">
-    </mat-form-field>
     @if (loading) {
       <mat-progress-bar mode="query"></mat-progress-bar>
     }
+    <mat-form-field class="w-full">
+      <mat-label># or name</mat-label>
+      <input matInput [formControl]="formControl" placeholder="#0001, 1 or bulbasaur">
+      @if (formControl.hasError(FORMAT_ERROR_CODE)){
+        <mat-error># or name is invalid</mat-error>
+      }
+      @if (formControl.hasError(POKEMON_ERROR_CODE)){
+        <mat-error>Pokémon not found</mat-error>
+      }
+    </mat-form-field>
     <app-card [pokemon]="pokemon" [link]="'/' + DEFAULT_PATH + '/' + pokemon?.id"></app-card>
   </div>
 </div>

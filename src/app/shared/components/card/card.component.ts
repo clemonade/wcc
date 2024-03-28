@@ -7,6 +7,7 @@ import {ReplacePipe} from "../../pipes/replace.pipe";
 import {TagComponent} from "../tag/tag.component";
 import {COMMA_REG_EXP, DEFAULT_PATH} from "../../../core/constants/app";
 import {RouterLink} from "@angular/router";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: "app-card",
@@ -24,6 +25,7 @@ import {RouterLink} from "@angular/router";
     TagComponent,
     NgTemplateOutlet,
     RouterLink,
+    MatIcon,
   ],
   templateUrl: "./card.component.html",
   styleUrl: "./card.component.scss",

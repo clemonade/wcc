@@ -10,7 +10,7 @@ import {
 import {MatButton, MatFabButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
-import {FormBuilder, ReactiveFormsModule} from "@angular/forms";
+import {FormControl, ReactiveFormsModule, ValidatorFn} from "@angular/forms";
 import {catchError, debounceTime, distinctUntilChanged, filter, map, of, switchMap, tap} from "rxjs";
 import {DEFAULT_PATH, SEARCH_DEBOUNCE_TIME, WHITESPACE_REG_EXP} from "../../../core/constants/app";
 import {PokeApiService} from "../../services/poke-api.service";
@@ -76,17 +76,27 @@ export class SearchDialogComponent implements OnInit {
   changeDetectorRef = inject(ChangeDetectorRef);
   destroyRef = inject(DestroyRef);
 
-  formControl = new FormBuilder().control("", {nonNullable: true});
+  searchValidator: ValidatorFn = (value) => {
+    return value.value
+      ? !SEARCH_REG_EXP.test(value.value) ? {[this.FORMAT_ERROR_CODE]: true} : null
+      : null;
+  };
+
+  formControl = new FormControl("", {
+    validators: [this.searchValidator],
+    nonNullable: true
+  });
+
   pokemon?: PokemonExtended;
   loading = false;
 
+  protected readonly FORMAT_ERROR_CODE = "format";
+  protected readonly POKEMON_ERROR_CODE = "pokemon";
   protected readonly DEFAULT_PATH = DEFAULT_PATH;
 
   formControlValueChanges$ = this.formControl.valueChanges.pipe(
-    tap(() => this.formControl.setErrors(null)),
     debounceTime(SEARCH_DEBOUNCE_TIME),
-    // TODO: form control validator too
-    filter((value) => SEARCH_REG_EXP.test(value)),
+    filter(() => !!this.formControl.value && this.formControl.valid),
     // transform to valid params
     map((value) => {
       const handleNumber = (val: string): string => !isNaN(+val)
@@ -101,7 +111,7 @@ export class SearchDialogComponent implements OnInit {
     }),
     switchMap((value) => this.pokeApiService.getPokemonByNameOrId$(value, {loading: true, error: true}).pipe(
       catchError(() => {
-        this.formControl.setErrors({});
+        this.formControl.setErrors({[this.POKEMON_ERROR_CODE]: true});
         return of(undefined);
       })
     )),

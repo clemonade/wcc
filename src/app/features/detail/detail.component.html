@@ -3,7 +3,7 @@
     <button mat-button [routerLink]="['/' + DEFAULT_PATH]">Pokémon List</button>
   </div>
   @if (pokemon) {
-    <div class="grid  gap-4 md:grid-cols-3">
+    <div class="grid gap-4 md:grid-cols-3">
       <div class="grid items-center justify-items-center md:col-span-1">
         <app-card [pokemon]="pokemon"></app-card>
       </div>
@@ -42,6 +42,8 @@
               }
             </div>
             @if (abilities[ability.ability.name]) {
+              <!--TODO: flavor_text_entries if empty effect_entries-->
+                <!--TODO: pipe to find by language-->
               @for (effectEntries of abilities[ability.ability.name].effect_entries; track $index) {
                 @if (effectEntries.language.name === LANGUAGE) {
                   <div class="flex flex-col gap-1">
